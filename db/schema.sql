@@ -8,7 +8,7 @@ CREATE TABLE employee (
     last_name VARCHAR(35) NOT NULL,
     role_id INT NOT NULL,
     manager_id INT,
-    ON DELETE SET NULL
+    ON DELETE SET NULL,
     PRIMARY KEY(id)
 );
 
@@ -21,8 +21,7 @@ CREATE TABLE department (
 CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT,
     job_title VARCHAR(35) NOT NULL,
-    -- needed DECIMAL due to int only handles 1 byte
-    salary DECIMAL,
+    salary DECIMAL(10,2),
     department_id INT NOT NULL,
-    ON DELETE SET NULL
+    PRIMARY KEY(id)
 );

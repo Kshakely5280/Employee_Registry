@@ -1,18 +1,18 @@
 const inquirer = require("inquirer");
-const mysql = require('mysql2')
+const mysql = require("mysql2");
 const PORT = process.env.PORT || 3001;
 // Connect to database
 const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      // MySQL username,
-      user: 'root',
-      // TODO: Add MySQL password here
-      password: 'P@ss129811',
-      database: 'employee_db'
-    },
-    console.log(`Connected to the employee_db database.`)
-  );
+  {
+    host: "localhost",
+    // MySQL username,
+    user: "root",
+    // TODO: Add MySQL password here
+    password: "P@ss129811",
+    database: "employee_db",
+  },
+  console.log(`Connected to the employee_db database.`)
+);
 
 inquirer
   // menu prompt
@@ -34,28 +34,111 @@ inquirer
   ])
   .then((information) => {
     switch (information.homeScreen) {
-        case "View All Departments": showAllDepartments();
+      case "View All Departments":
+        showAllDepartments();
         break;
 
-        case "View All Roles": showAllRoles();
+      case "View All Roles":
+        showAllRoles();
         break;
 
-        case "View All Employees": showAllEmployees();
+      case "View All Employees":
+        showAllEmployees();
         break;
 
-        case "Add A Department": addDepartment();
+      case "Add A Department":
+        addDepartment();
         break;
 
-        case "Add A Role": addRole();
+      case "Add A Role":
+        addRole();
         break;
 
-        case "Add An Employee": addEmployee();
+      case "Add An Employee":
+        addEmployee();
         break;
 
-        case "Update Employee Role": updateEmployee();
+      case "Update Employee Role":
+        updateEmployee();
         break;
     }
   });
+
+function showAllDepartments() {
+  db.query(`SELECT * FROM department`, function (err, results) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log(`\n`);
+    console.table(results);
+  });
+}
+
+function showAllRoles() {
+  db.query(`SELECT * FROM role`, function (err, results) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.log(`\n`);
+    console.table(results);
+  });
+}
+
+function showAllEmployees() {
+  db.query(
+    `
+      SELECT 
+        employee.id, 
+        employee.first_name, 
+        employee.last_name, 
+        role.job_title, 
+        department.depName AS department, 
+        role.salary, 
+        CONCAT(manager.first_name, ' ', manager.last_name) AS manager 
+      FROM employee
+      LEFT JOIN role ON employee.role_id = role.id
+      LEFT JOIN department ON role.department_id = department.id
+      LEFT JOIN employee manager ON employee.manager_id = manager.id
+    `,
+    function (err, results) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(`\n`);
+      console.table(results);
+    }
+  );
+}
+
+function addDepartment() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "depName",
+        message:
+          "Please enter the name of the department you would like to add:",
+      },
+    ])
+    .then((department) => {
+      db.query(
+        `INSERT INTO department (depName) VALUES (?)`,
+        [department.depName],
+        function (err, results) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(`\nDepartment added successfully!\n`);
+          showAllDepartments();
+        }
+      );
+    });
+}
+
 // GIVEN a command-line application that accepts user input
 // WHEN I start the application
 // THEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -73,12 +156,3 @@ inquirer
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 // WHEN I choose to update an employee role
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
-
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-    res.status(404).end();
-  });
-  
-  app.listen(PORT, () => {
-    console.log(`Server running on port http://localhost:${PORT}`);
-  });
