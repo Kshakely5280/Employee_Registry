@@ -33,7 +33,28 @@ inquirer
     },
   ])
   .then((information) => {
-    
+    switch (information.homeScreen) {
+        case "View All Departments": showAllDepartments();
+        break;
+
+        case "View All Roles": showAllRoles();
+        break;
+
+        case "View All Employees": showAllEmployees();
+        break;
+
+        case "Add A Department": addDepartment();
+        break;
+
+        case "Add A Role": addRole();
+        break;
+
+        case "Add An Employee": addEmployee();
+        break;
+
+        case "Update Employee Role": updateEmployee();
+        break;
+    }
   });
 // GIVEN a command-line application that accepts user input
 // WHEN I start the application
