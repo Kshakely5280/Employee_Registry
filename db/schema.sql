@@ -21,7 +21,7 @@ CREATE TABLE department (
 CREATE TABLE role (
     id INT NOT NULL AUTO_INCREMENT,
     job_title VARCHAR(35) NOT NULL,
-    -- needed due to int only handles 1 byte
+    -- needed DECIMAL due to int only handles 1 byte
     salary DECIMAL,
     department_id INT NOT NULL,
     ON DELETE SET NULL
