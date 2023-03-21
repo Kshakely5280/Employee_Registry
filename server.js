@@ -14,6 +14,9 @@ const db = mysql.createConnection(
   console.log(`Connected to the employee_db database.`)
 );
 
+homeScreen();
+
+function homeScreen() {
 inquirer
   // menu prompt
   .prompt([
@@ -63,7 +66,7 @@ inquirer
         break;
     }
   });
-
+}
 function showAllDepartments() {
   db.query(`SELECT * FROM department`, function (err, results) {
     if (err) {
@@ -72,7 +75,9 @@ function showAllDepartments() {
     }
     console.log(`\n`);
     console.table(results);
+    homeScreen();
   });
+  
 }
 
 function showAllRoles() {
@@ -83,7 +88,9 @@ function showAllRoles() {
     }
     console.log(`\n`);
     console.table(results);
+    homeScreen();
   });
+  
 }
 
 function showAllEmployees() {
@@ -109,6 +116,7 @@ function showAllEmployees() {
       }
       console.log(`\n`);
       console.table(results);
+      homeScreen();
     }
   );
 }
@@ -138,6 +146,8 @@ function addDepartment() {
       );
     });
 }
+
+function addrole() {}
 
 // GIVEN a command-line application that accepts user input
 // WHEN I start the application

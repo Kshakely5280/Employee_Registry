@@ -1,5 +1,23 @@
 {
   "dependencies": {
-    "inquirer": "^8.2.4"
-  }
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "employee_registry",
+  "description": "",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kshakely5280/Employee_Registry.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kshakely5280/Employee_Registry/issues"
+  },
+  "homepage": "https://github.com/Kshakely5280/Employee_Registry#readme"
 }
