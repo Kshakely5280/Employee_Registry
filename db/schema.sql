@@ -9,6 +9,8 @@ CREATE TABLE employee (
     role_id INT NOT NULL,
     manager_id INT,
     ON DELETE SET NULL,
+    FOREIGN KEY(role_id)
+    REFERENCES role(id)
     PRIMARY KEY(id)
 );
 
