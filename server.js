@@ -17,55 +17,55 @@ const db = mysql.createConnection(
 homeScreen();
 
 function homeScreen() {
-inquirer
-  // menu prompt
-  .prompt([
-    {
-      type: "list",
-      name: "homeScreen",
-      message: "Please choose from one of the following options to continue",
-      choices: [
-        "View All Departments",
-        "View All Roles",
-        "View All Employees",
-        "Add A Department",
-        "Add A Role",
-        "Add An Employee",
-        "Update Employee Role",
-      ],
-    },
-  ])
-  .then((information) => {
-    switch (information.homeScreen) {
-      case "View All Departments":
-        showAllDepartments();
-        break;
+  inquirer
+    // menu prompt
+    .prompt([
+      {
+        type: "list",
+        name: "homeScreen",
+        message: "Please choose from one of the following options to continue",
+        choices: [
+          "View All Departments",
+          "View All Roles",
+          "View All Employees",
+          "Add A Department",
+          "Add A Role",
+          "Add An Employee",
+          "Update Employee Role",
+        ],
+      },
+    ])
+    .then((information) => {
+      switch (information.homeScreen) {
+        case "View All Departments":
+          showAllDepartments();
+          break;
 
-      case "View All Roles":
-        showAllRoles();
-        break;
+        case "View All Roles":
+          showAllRoles();
+          break;
 
-      case "View All Employees":
-        showAllEmployees();
-        break;
+        case "View All Employees":
+          showAllEmployees();
+          break;
 
-      case "Add A Department":
-        addDepartment();
-        break;
+        case "Add A Department":
+          addDepartment();
+          break;
 
-      case "Add A Role":
-        addRole();
-        break;
+        case "Add A Role":
+          addRole();
+          break;
 
-      case "Add An Employee":
-        addEmployee();
-        break;
+        case "Add An Employee":
+          addEmployee();
+          break;
 
-      case "Update Employee Role":
-        updateEmployee();
-        break;
-    }
-  });
+        case "Update Employee Role":
+          updateEmployee();
+          break;
+      }
+    });
 }
 function showAllDepartments() {
   db.query(`SELECT * FROM department`, function (err, results) {
@@ -77,7 +77,6 @@ function showAllDepartments() {
     console.table(results);
     homeScreen();
   });
-  
 }
 
 function showAllRoles() {
@@ -90,7 +89,6 @@ function showAllRoles() {
     console.table(results);
     homeScreen();
   });
-  
 }
 
 function showAllEmployees() {
@@ -148,43 +146,59 @@ function addDepartment() {
 }
 
 function addRole() {
-    db.query(`SELECT * FROM department`, function (err, results) {
-        if (err) {
-          console.log(err);
-          return;
-        }
+  db.query(`SELECT * FROM department`, function (err, results) {
+    if (err) {
+      console.log(err);
+      return;
+    }
 
-        const departmentNames = results.map((department) => {
-            return { name: department.depName, value: department.id };
-        });
+    const departmentNames = results.map((department) => {
+      return { name: department.depName, value: department.id };
+    });
 
-        console.log(departmentNames)
-        //console.log(results);
-        console.log(`\n`);
-        console.table(results);
+    console.log(departmentNames);
+    console.log(`\n`);
+    console.table(results);
 
-        inquirer
-        .prompt([
-            {
-                type: "list",
-                name: "roleDepName",
-                message:
-                  "Please choose the department name for this new role:", 
-                choices: departmentNames
-            },
-            {
-                type: "input",
-                name: "depName",
-                message:
-                  "Please enter the name of the department you would like to add:",
-              },
-        ]).then(answers => {
-            console.log(answers)
-        })
-        
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "roleDepName",
+          message: "Please choose the department for this new role:",
+          choices: departmentNames,
+        },
+        {
+          type: "input",
+          name: "newRoleName",
+          message: "Please enter the job title for this new role:",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "Please enter the salary for this new role:",
+        },
+      ])
+      .then((roleInfo) => {
+            db.query(
+              `INSERT INTO role (department_id, job_title, salary) VALUES (?, ?, ?)`,
+              [roleInfo.roleDepName, roleInfo.newRoleName, roleInfo.salary],
+              function (err, results) {
+                if (err) {
+                  console.log(err);
+                  return;
+                }
+                console.log(`\nNew Role added successfully!\n`);
+                showAllRoles();
+              }
+            );
+          });
       });
+  };
 
-}
+
+  function addNewEmployee()
+
 
 // WHEN I choose to add a role
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
