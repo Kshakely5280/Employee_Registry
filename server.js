@@ -58,7 +58,7 @@ function homeScreen() {
           break;
 
         case "Add An Employee":
-          addEmployee();
+          addNewEmployee();
           break;
 
         case "Update Employee Role":
@@ -180,28 +180,67 @@ function addRole() {
         },
       ])
       .then((roleInfo) => {
-            db.query(
-              `INSERT INTO role (department_id, job_title, salary) VALUES (?, ?, ?)`,
-              [roleInfo.roleDepName, roleInfo.newRoleName, roleInfo.salary],
-              function (err, results) {
-                if (err) {
-                  console.log(err);
-                  return;
-                }
-                console.log(`\nNew Role added successfully!\n`);
-                showAllRoles();
-              }
-            );
-          });
+        db.query(
+          `INSERT INTO role (department_id, job_title, salary) VALUES (?, ?, ?)`,
+          [roleInfo.roleDepName, roleInfo.newRoleName, roleInfo.salary],
+          function (err, results) {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            console.log(`\nNew Role added successfully!\n`);
+            showAllRoles();
+          }
+        );
       });
-  };
+  });
+}
 
+function addNewEmployee() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "empFirstName",
+        message: "Please enter the FIRST name of new employee:",
+      },
+      {
+        type: "input",
+        name: "empLastName",
+        message: "Please enter the LAST name of new employee:",
+      },
+      {
+        type: "input",
+        name: "empRoleName",
+        message: "Please enter the role ID of new employee:",
+      },
+      {
+        type: "input",
+        name: "managerName",
+        message: "Please enter the ID of this employees' manager:",
+      },
+    ])
+    .then((empAns) => {
+      db.query(
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`,
+        [
+          empAns.empFirstName,
+          empAns.empLastName,
+          empAns.empRoleName,
+          empAns.managerName,
+        ],
+        function (err, results) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          console.log(`\nNew Employee added successfully!\n`);
+          showAllEmployees();
+        }
+      );
+    });
+}
 
-  function addNewEmployee()
-
-
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
 // WHEN I choose to add an employee
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 // WHEN I choose to update an employee role
