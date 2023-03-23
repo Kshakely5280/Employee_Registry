@@ -5,9 +5,7 @@ const PORT = process.env.PORT || 3001;
 const db = mysql.createConnection(
   {
     host: "localhost",
-    // MySQL username,
     user: "root",
-    // TODO: Add MySQL password here
     password: "P@ss129811",
     database: "employee_db",
   },
@@ -67,6 +65,7 @@ function homeScreen() {
       }
     });
 }
+// shows existing data in tables
 function showAllDepartments() {
   db.query(`SELECT * FROM department`, function (err, results) {
     if (err) {
@@ -90,7 +89,7 @@ function showAllRoles() {
     homeScreen();
   });
 }
-
+// shows all employee information including department, role, and manager
 function showAllEmployees() {
   db.query(
     `
@@ -144,7 +143,7 @@ function addDepartment() {
       );
     });
 }
-
+// adds additional job names to role table
 function addRole() {
   db.query(`SELECT * FROM department`, function (err, results) {
     if (err) {
@@ -195,7 +194,7 @@ function addRole() {
       });
   });
 }
-
+// adds new employee data to employee table
 function addNewEmployee() {
   inquirer
     .prompt([
@@ -240,8 +239,66 @@ function addNewEmployee() {
       );
     });
 }
+// shows current empployee list and roles prior to prompting update changes.
+function updateEmployee() {
+  db.query(
+    `
+          SELECT 
+            employee.id, 
+            employee.first_name, 
+            employee.last_name, 
+            role.job_title, 
+            department.depName AS department, 
+            role.salary, 
+            CONCAT(manager.first_name, ' ', manager.last_name) AS manager 
+          FROM employee
+          LEFT JOIN role ON employee.role_id = role.id
+          LEFT JOIN department ON role.department_id = department.id
+          LEFT JOIN employee manager ON employee.manager_id = manager.id
+        `,
+    function (err, results) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(`\n`);
+      console.table(results);
+      console.log("Current Employee Information:");
+    }
+  );
 
-// WHEN I choose to add an employee
-// THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "upEmpId",
+        message:
+          "\nPlease enter the ID number of the employee you wish to update:\n",
+      },
+      {
+        type: "list",
+        name: "upEmpRole",
+        message: "Please choose a New Role for this employee:",
+        Choices: [
+          "Salesman",
+          "Web Designer",
+          "Tech Assistant",
+          "Field Estimator",
+          "Payroll",
+          "IT",
+        ],
+      },
+    ])
+
+    .then((updateEmpInfo) => {
+      db.query(
+        "UPDATE employee SET job_title = ? WHERE id = ?",
+        [updateEmpInfo.upEmpRole],
+        function (err, result) {
+          if (err) throw err;
+          console.log(`\nEmployee Role Successfully Updated!\n`);
+        }
+      );
+    });
+}
+
